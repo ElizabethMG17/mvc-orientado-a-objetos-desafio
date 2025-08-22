@@ -14,22 +14,22 @@ class ContactsController {
   }
 
   processOptions(options: ContactsControllerOptions) {
-    let result;
-
-    if (options.action === "get") {
-      if (options.params.id) {
-        result = this.contacts.getOneById(options.params.id);
-      } else {
-        result = this.contacts.getAll();
-      }
-    } else if (options.action === "save") {
-      const newContact = options.params;
-      this.contacts.addOne(newContact);
-      this.contacts.save();
-      return newContact; // Retornar el nuevo contacto
+    if (options.action === "get" && options.params.id) {
+      return this.contacts.getOneById(options.params.id);
+    } else if (options.action === "get" && !options.params.id) {
+      return this.contacts.getAll();
     }
-    return result; // Si no hay acción válida
+    if (options.action === "save") {
+  const newContact = options.params;
+  this.contacts.addOne(newContact);
+  this.contacts.save();   // solo guarda en archivo
+  return newContact;      // devolvemos el contacto agregado
+}
+    return null;
   }
+
+
+
 }
 
 export { ContactsController };

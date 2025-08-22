@@ -1,5 +1,7 @@
 import contactsJason from './contacts.json'; // Asegúrate de que el archivo esté en la misma carpeta
-import path from 'path';
+
+import * as fs from 'fs';
+import * as path from 'path';
 
 class Contact {
   id: number = 0;
@@ -11,35 +13,32 @@ class Contact {
   }
 }
 
+const filePath = path.resolve(__dirname, 'contacts.json');
+
 class ContactsCollection {
   contactos: Contact[] = [];
 
-  load() {
-    contactsJason.forEach((item: any) => {
-      const contact = new Contact(item.id, item.name);
-      this.addOne(contact);
-    });
-  }
+load() {
+  const perfil = fs.readFileSync(filePath, 'utf-8');
+  this.contactos = JSON.parse(perfil);
+}
 
   getAll() {
     return this.contactos;
   }
 
-  addOne(contact: Contact): void {
-    const existe = this.contactos.some(p => p.id === contact.id);
-    if (existe) {
-      throw new Error(`El producto con ID ${contact.id} ya existe en la lista.`);
-    }
-    this.contactos.push(contact);
+addOne(contact: Contact){ // Creamos el metodo que permite agregar contactos de tipo Contact
+    this.contactos.push(contact); // Pusheamos el objeto al array
+    return this.contactos; // Y retornamos el nuevo objeto
   }
 
   getOneById(id: number): Contact | undefined {
     return this.contactos.find(c => c.id === id);
   }
 
-  save(): void {
-    // Si decides volver a usar jsonfile para guardar, puedes hacerlo aquí
-  }
+ save(){
+  fs.writeFileSync(filePath, JSON.stringify(this.contactos, null, 2));
+}
 }
 
 export { ContactsCollection };
